@@ -1,0 +1,69 @@
+<?php
+
+namespace Shop\form;
+
+use pocketmine\form\FormIcon;
+use pocketmine\form\MenuForm;
+use pocketmine\form\MenuOption;
+use pocketmine\Player;
+use Shop\Shop;
+
+class ShopCategoryItemForm extends MenuForm {
+
+    public $category, $id, $damage, $count, $customName, $price, $path, $icon;
+
+    public function __construct(Player $player, string $category) {
+        $this->category = $category;
+        $settingConfig = Shop::getInstance()->getSettingConfig();
+        $itemConfig = Shop::getInstance()->getItemConfig();
+        $title = $settingConfig->get("form-title");
+        $return = $settingConfig->get("return-title");
+        $options = [new MenuOption($return)];
+        foreach ($itemConfig->get("categories") as $category) {
+            foreach ($category["items"] as $item) {
+                $item = explode(":", $item);
+                $id = intval($item[0]);
+                $damage = intval($item[1]);
+                $count = intval($item[2]);
+                $customName = $item[3];
+                $price = intval($item[4]);
+                $path = $item[5];
+                $icon = $item[6];
+                if ($path == "url") {
+                    $icon = new FormIcon($icon, FormIcon::IMAGE_TYPE_URL);
+                }elseif ($path == "path") {
+                    $icon = new FormIcon($icon, FormIcon::IMAGE_TYPE_PATH);
+                }else{
+                    $icon = new FormIcon($icon, FormIcon::IMAGE_TYPE_URL);
+                }
+                $option = $count . "x " . $customName . "\n" . $price . "TL";
+                $this->id[$option] = $id;
+                $this->damage[$option] = $damage;
+                $this->count[$option] = $count;
+                $this->customName[$option] = $customName;
+                $this->price[$option] = $price;
+                $this->path[$option] = $path;
+                $this->icon[$option] = $icon;
+                $options[] = new MenuOption($option, $icon);
+            }
+        }
+        $money = Shop::getEconomyAPI()->myMoney($player);
+        $monetaryUnit = Shop::getEconomyAPI()->getMonetaryUnit();
+        parent::__construct($title, "\n§7Mevcut paran : " . $money . $monetaryUnit . "\n\n", $options, function (Player $player, int $selectedOption): void {
+            $option = $this->getOption($selectedOption)->getText();
+            if ($selectedOption == 0) {
+                $player->sendForm(new ShopCategoryForm());
+            }else{
+                $category = $this->category;
+                $id = $this->id[$option];
+                $damage = $this->damage[$option];
+                $count = $this->count[$option];
+                $customName = $this->customName[$option];
+                $price = $this->price[$option];
+                $path = $this->path[$option];
+                $icon = $this->icon[$option];
+                $player->sendForm(new ShopForm($category, $id, $damage, $count, $customName, $price, $path, $icon));
+            }
+        });
+    }
+}
