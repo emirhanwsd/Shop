@@ -16,13 +16,7 @@ class ShopCategoryForm extends MenuForm {
         $title = $settingConfig->get("form-title");
         $options = [];
         foreach ($itemConfig->get("categories") as $category) {
-            if ($category["path"] == "url") {
-                $icon = new FormIcon($category["category-icon"], FormIcon::IMAGE_TYPE_URL);
-            }elseif ($category["path"] == "path") {
-                $icon = new FormIcon($category["category-icon"], FormIcon::IMAGE_TYPE_PATH);
-            }else{
-                $icon = new FormIcon($category["category-icon"], FormIcon::IMAGE_TYPE_URL);
-            }
+            $icon = new FormIcon($category["category-icon"], $category["path"] === "path" ? FormIcon::IMAGE_TYPE_PATH : FormIcon::IMAGE_TYPE_URL);
             $options[] = new MenuOption($category["category-title"], $icon);
         }
         parent::__construct($title, "", $options, function (Player $player, int $selectedOption): void {
