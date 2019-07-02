@@ -11,17 +11,10 @@ use pocketmine\utils\TextFormat;
 use Shop\command\ShopCommand;
 
 class Shop extends PluginBase {
-
-    /**
-     * @var null|Shop
-     */
-
+    /** @var null|Shop */
     protected static $api = null;
 
-    /**
-     * @var null|EconomyAPI
-     */
-
+    /** @var null|EconomyAPI */
     protected static $economyAPI = null;
 
     public function onEnable() {
@@ -40,46 +33,33 @@ class Shop extends PluginBase {
         $itemConfig = new Config($this->getDataFolder() . "item.yml", Config::YAML, [
             "categories" => []
         ]);
-        $command = $settingConfig->get("command");
-        $description = $settingConfig->get("description");
-        $aliases = $settingConfig->get("aliases");
-        $categories = $itemConfig->get("categories");
-        if (!Server::getInstance()->getPluginManager()->getPlugin("EconomyAPI")) {
-            MainLogger::$logger->alert(TextFormat::RED . "EconomyAPI yüklü değil.");
+        $command = $settingConfig->get("command", "shop");
+        $description = $settingConfig->get("description", "Shop command.");
+        $aliases = $settingConfig->get("aliases", []);
+        $categories = $itemConfig->get("categories", []);
+        if(!$this->checkDepents(){
             Server::getInstance()->getPluginManager()->disablePlugin($this);
-            return false;
-        }
-        if (!is_string($command)) {
-            MainLogger::$logger->alert(TextFormat::RED . "Command yazı olmalı.");
-            Server::getInstance()->getPluginManager()->disablePlugin($this);
-            return false;
-        }
-        if (!is_string($description)) {
-            MainLogger::$logger->alert(TextFormat::RED . "Description yazı olmalı.");
-            Server::getInstance()->getPluginManager()->disablePlugin($this);
-            return false;
-        }
-        if (!is_array($aliases)) {
-            MainLogger::$logger->alert(TextFormat::RED . "Aliases dizi olmalı.");
-            Server::getInstance()->getPluginManager()->disablePlugin($this);
-            return false;
-        }
-        if (!is_array($categories)) {
-            MainLogger::$logger->alert(TextFormat::RED . "Catogeries dizi olmalı.");
-            Server::getInstance()->getPluginManager()->disablePlugin($this);
-            return false;
-        }
-        if (static::$economyAPI == null) {
-            static::$economyAPI = Server::getInstance()->getPluginManager()->getPlugin("EconomyAPI");
+            return;
         }
         Server::getInstance()->getCommandMap()->register($command, new ShopCommand($command, $description, $aliases));
         MainLogger::$logger->info(TextFormat::GREEN . "Shop plugini aktif edildi.");
     }
 
+    public function checkDepents(): bool{
+       $defaultEconomyAPI = Server::getInstance()->getPluginManager()->getPlugin("EconomyAPI");
+       if ($defaultEconomyAPI === null) {
+            MainLogger::$logger->alert(TextFormat::RED . "EconomyAPI yüklü değil.");
+            return false;
+       }
+       if (self::$economyAPI === null) {
+            self::$economyAPI = $defaultEconomyAPI;
+       }
+       return true;
+    }
+
     /**
      * @return null|Shop
      */
-
     public static function getInstance(): ?self {
         return static::$api;
     }
@@ -87,7 +67,6 @@ class Shop extends PluginBase {
     /**
      * @return null|EconomyAPI
      */
-
     public static function getEconomyAPI(): ?EconomyAPI {
         return static::$economyAPI;
     }
@@ -95,7 +74,6 @@ class Shop extends PluginBase {
     /**
      * @return Config
      */
-
     public function getSettingConfig(): Config {
         return new Config($this->getDataFolder() . "setting.yml", Config::YAML);
     }
@@ -103,7 +81,6 @@ class Shop extends PluginBase {
     /**
      * @return Config
      */
-
     public function getItemConfig(): Config {
         return new Config($this->getDataFolder() . "item.yml", Config::YAML);
     }
