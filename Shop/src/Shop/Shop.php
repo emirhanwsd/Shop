@@ -37,7 +37,7 @@ class Shop extends PluginBase {
         $description = $settingConfig->get("description", "Shop command.");
         $aliases = $settingConfig->get("aliases", []);
         $categories = $itemConfig->get("categories", []);
-        if(!$this->checkDepents(){
+        if(!$this->checkDepents()) {
             Server::getInstance()->getPluginManager()->disablePlugin($this);
             return;
         }
