@@ -27,15 +27,9 @@ class ShopCategoryItemForm extends MenuForm {
                 $count = intval($item[2]);
                 $customName = $item[3];
                 $price = intval($item[4]);
-                $path = $item[5];
-                $icon = $item[6];
-                if ($path == "url") {
-                    $icon = new FormIcon($icon, FormIcon::IMAGE_TYPE_URL);
-                }elseif ($path == "path") {
-                    $icon = new FormIcon($icon, FormIcon::IMAGE_TYPE_PATH);
-                }else{
-                    $icon = new FormIcon($icon, FormIcon::IMAGE_TYPE_URL);
-                }
+                $icon = $item[5];
+                $path = $item[6];
+                $iconClass = new FormIcon($icon, $path == "path" ? $path : "url");
                 $option = $count . "x " . $customName . "\n" . $price . "TL";
                 $this->id[$option] = $id;
                 $this->damage[$option] = $damage;
@@ -44,7 +38,7 @@ class ShopCategoryItemForm extends MenuForm {
                 $this->price[$option] = $price;
                 $this->path[$option] = $path;
                 $this->icon[$option] = $icon;
-                $options[] = new MenuOption($option, $icon);
+                $options[] = new MenuOption($option, $iconClass);
             }
         }
         $money = Shop::getEconomyAPI()->myMoney($player);
