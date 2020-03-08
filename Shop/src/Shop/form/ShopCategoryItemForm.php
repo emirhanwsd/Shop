@@ -37,7 +37,7 @@ class ShopCategoryItemForm extends MenuForm {
                 $this->customName[$option] = $customName;
                 $this->price[$option] = $price;
                 $this->path[$option] = $path;
-                $this->icon[$option] = $icon;
+                $this->icon[$option] = $iconClass;
                 $options[] = new MenuOption($option, $iconClass);
             }
         }
