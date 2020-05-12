@@ -19,27 +19,26 @@ class ShopCategoryItemForm extends MenuForm {
         $title = $settingConfig->get("form-title");
         $return = $settingConfig->get("return-title");
         $options = [new MenuOption($return)];
-        foreach ($itemConfig->get("categories") as $category) {
-            foreach ($category["items"] as $item) {
-                $item = explode(":", $item);
-                $id = intval($item[0]);
-                $damage = intval($item[1]);
-                $count = intval($item[2]);
-                $customName = $item[3];
-                $price = intval($item[4]);
-                $icon = $item[5];
-                $path = $item[6];
-                $iconClass = new FormIcon($icon, $path == "path" ? $path : "url");
-                $option = $count . "x " . $customName . "\n" . $price . "TL";
-                $this->id[$option] = $id;
-                $this->damage[$option] = $damage;
-                $this->count[$option] = $count;
-                $this->customName[$option] = $customName;
-                $this->price[$option] = $price;
-                $this->path[$option] = $path;
-                $this->icon[$option] = $iconClass;
-                $options[] = new MenuOption($option, $iconClass);
-            }
+        $monetaryUnit = Shop::getEconomyAPI()->getMonetaryUnit();
+        foreach ($itemConfig->getNested("categories." . $category . ".items") as $item) {
+            $item = explode(":", $item);
+            $id = intval($item[0]);
+            $damage = intval($item[1]);
+            $count = intval($item[2]);
+            $customName = $item[3];
+            $price = intval($item[4]);
+            $path = $item[5];
+            $icon = $item[6];
+            $iconClass = new FormIcon($icon, $path == "path" ? $path : "url");
+            $option = $count . "x " . $customName . "\n" . $price . $monetaryUnit;
+            $this->id[$option] = $id;
+            $this->damage[$option] = $damage;
+            $this->count[$option] = $count;
+            $this->customName[$option] = $customName;
+            $this->price[$option] = $price;
+            $this->path[$option] = $path;
+            $this->icon[$option] = $iconClass;
+            $options[] = new MenuOption($option, $iconClass);
         }
         $money = Shop::getEconomyAPI()->myMoney($player);
         $monetaryUnit = Shop::getEconomyAPI()->getMonetaryUnit();
