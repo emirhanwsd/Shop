@@ -2,7 +2,7 @@
 
 Shop plugin for Altay
 
-### *item.yml* must be like this:
+### *item.yml* should be like this:
 
 ```
 categories:
@@ -24,4 +24,6 @@ categories:
       
 ### For adding items to category:
 
-```id:meta:count:customName:pathName|urlLink:path|url:```
+```id:meta:count:customName:pathName|urlLink:path|url```
+
+- category-title & categories name must be same.
