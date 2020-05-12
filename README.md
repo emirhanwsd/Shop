@@ -24,6 +24,6 @@ categories:
       
 ### For adding items to category:
 
-```id:meta:count:customName:pathName|urlLink:path|url```
+```id:meta:count:customName:path|url:pathName|urlLink```
 
 - category-title & categories name must be same.
