@@ -1,6 +1,6 @@
 # Shop
 
-Shop plugin for Altay
+Shop plugin for @pmmp
 
 ### *item.yml* should be like this:
 
